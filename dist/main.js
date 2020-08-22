@@ -104044,12 +104044,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _LineChart__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./LineChart */ "./src/LineChart.js");
 /* harmony import */ var _PieChart__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PieChart */ "./src/PieChart.js");
 /* harmony import */ var _Map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Map */ "./src/Map.js");
+/* harmony import */ var _BarChart__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./BarChart */ "./src/BarChart.js");
+/* harmony import */ var _HorizontalBarChart__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./HorizontalBarChart */ "./src/HorizontalBarChart.js");
+/* harmony import */ var _Chart__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Chart */ "./src/Chart.js");
 
 
 
 
 
- // import BarChart from './BarChart';
+
+
+
+
 
 class App extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor() {
@@ -104057,7 +104063,7 @@ class App extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   }
 
   render() {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["HashRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Covid Tracker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["HashRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Covid Data Visualization"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
       component: _Nav__WEBPACK_IMPORTED_MODULE_2__["default"]
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
       exact: true,
@@ -104071,6 +104077,18 @@ class App extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       exact: true,
       path: "/mapchart",
       component: _Map__WEBPACK_IMPORTED_MODULE_5__["default"]
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+      exact: true,
+      path: "/barchart",
+      component: _BarChart__WEBPACK_IMPORTED_MODULE_6__["default"]
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+      exact: true,
+      path: "/horizontalbarchart",
+      component: _HorizontalBarChart__WEBPACK_IMPORTED_MODULE_7__["default"]
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+      exact: true,
+      path: "/chart",
+      component: _Chart__WEBPACK_IMPORTED_MODULE_8__["default"]
     }));
   }
 
@@ -104078,6 +104096,312 @@ class App extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
 ;
 /* harmony default export */ __webpack_exports__["default"] = (App);
+
+/***/ }),
+
+/***/ "./src/BarChart.js":
+/*!*************************!*\
+  !*** ./src/BarChart.js ***!
+  \*************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-chartjs-2 */ "./node_modules/react-chartjs-2/es/index.js");
+/* harmony import */ var react_chartjs_2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+class BarChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chartdata: {}
+    };
+  }
+
+  async componentDidMount() {
+    let recovered = [];
+    let deaths = [];
+    let cases = [];
+    let active = [];
+    let state = [];
+    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://disease.sh/v3/covid-19/states").then(res => {
+      console.log("response -- ", res.data);
+
+      for (let i = 0; i < res.data.length; i++) {
+        recovered.push(res.data[i].recovered);
+        deaths.push(res.data[i].deaths);
+        cases.push(res.data[i].cases);
+        active.push(res.data[i].active);
+        state.push(res.data[i].state);
+      }
+    });
+    this.setState({
+      chartdata: {
+        labels: state,
+        datasets: [// These two will be in the same stack.
+        {
+          label: "Cases",
+          backgroundColor: "rgba(255, 99, 132, 0.6)",
+          borderColor: "rgba(255, 99, 132, 0.6)",
+          borderWidth: 1,
+          //stack: 1,
+          hoverBackgroundColor: "rgba(255, 99, 132, 0.6)",
+          hoverBorderColor: "rgba(255, 99, 132, 0.6)",
+          data: cases
+        }, {
+          label: "Active",
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
+          borderColor: "rgba(54, 162, 235, 0.6)",
+          borderWidth: 1,
+          //stack: 1,
+          hoverBackgroundColor: "rgba(54, 162, 235, 0.6)",
+          hoverBorderColor: "rgba(54, 162, 235, 0.6)",
+          data: active
+        }, {
+          label: "Recovered",
+          backgroundColor: "rgba(255, 206, 86, 0.6)",
+          borderColor: "rgba(255, 206, 86, 0.6)",
+          borderWidth: 1,
+          //stack: 1,
+          hoverBackgroundColor: "rgba(255, 206, 86, 0.6)",
+          hoverBorderColor: "rgba(255, 206, 86, 0.6)",
+          data: recovered
+        }, {
+          label: "Death",
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          borderColor: "rgba(75, 192, 192, 0.6)",
+          borderWidth: 1,
+          //stack: 1,
+          hoverBackgroundColor: "rgba(75, 192, 192, 0.6)",
+          hoverBorderColor: "rgba(75, 192, 192, 0.6)",
+          data: deaths
+        }]
+      }
+    });
+  }
+
+  render() {
+    console.log("render is called ==", this.state);
+    let {
+      chartdata
+    } = this.state; // const options = {
+    //   responsive: true,
+    //   legend: {
+    //     display: false,
+    //   },
+    //   type: "bar",
+    //  };
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, chartdata ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__["Bar"], {
+      data: chartdata
+    }) : null);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (BarChart);
+
+/***/ }),
+
+/***/ "./src/Chart.js":
+/*!**********************!*\
+  !*** ./src/Chart.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-chartjs-2 */ "./node_modules/react-chartjs-2/es/index.js");
+/* harmony import */ var react_chartjs_2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+class Chart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chartData: {}
+    };
+  }
+
+  async componentDidMount() {
+    let casesPerOneMillion = [];
+    let deathsPerOneMillion = [];
+    let testsPerOneMillion = [];
+    let states = [];
+    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://disease.sh/v3/covid-19/states?sort=todayCases").then(res => {
+      console.log("res summary--- ", res.data); // let recordList = res.data;
+      //    let  recordArr = recordList.sort((a, b) =>
+      //                 a.casesPerOneMillion > casesPerOneMillion ? 1 : -1
+      //               )
+      //         console.log('recordArr --- ',recordArr);
+
+      for (let i = 0; i < res.data.length - 10; i++) {
+        casesPerOneMillion.push(res.data[i].casesPerOneMillion);
+        deathsPerOneMillion.push(res.data[i].deathsPerOneMillion);
+        testsPerOneMillion.push(res.data[i].testsPerOneMillion);
+        states.push(res.data[i].state);
+      }
+    });
+    console.log('casesPerOneMillion ---- ', casesPerOneMillion);
+    console.log('deathsPerOneMillion ---- ', deathsPerOneMillion);
+    console.log('testsPerOneMillion ---- ', testsPerOneMillion);
+    console.log('states -- ', states);
+    this.getChartData(casesPerOneMillion, deathsPerOneMillion, testsPerOneMillion, states);
+  }
+
+  getChartData(casesPerOneMillion, deathsPerOneMillion, testsPerOneMillion, states) {
+    this.setState({
+      chartData: {
+        labels: states,
+        datasets: [// These two will be in the same stack.
+        //   {
+        //     label: 'Deaths Per Million',
+        //     backgroundColor: 'rgba(255,99,132,0.2)',
+        //     borderColor: 'rgba(255,99,132,0.2)',
+        //     pointBackgroundColor: 'rgba(255,99,132,0.2)',
+        //     pointBorderColor: '#fff',
+        //     pointHoverBackgroundColor: '#fff',
+        //     pointHoverBorderColor: 'rgba(255,99,132,0.2)',
+        //     data:deathsPerOneMillion
+        //   },
+        {
+          label: 'Tests Per Million',
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          borderColor: 'rgba(54, 162, 235, 0.6)',
+          pointBorderColor: 'rgba(54, 162, 235, 0.6)',
+          pointBackgrounColor: 'rgba(54, 162, 235, 0.6)',
+          pointRadius: 1,
+          data: testsPerOneMillion
+        }, {
+          label: 'Cases Per Million',
+          backgroundColor: 'rgba(255, 99, 132, 0.6)',
+          borderColor: 'rgba(255, 99, 132, 0.6)',
+          pointBorderColor: 'rgba(255, 99, 132, 0.6)',
+          pointBackgrounColor: 'rgba(255, 99, 132, 0.6)',
+          pointRadius: 1,
+          data: casesPerOneMillion
+        }]
+      }
+    });
+  }
+
+  render() {
+    let {
+      chartData
+    } = this.state;
+    console.log("chartData in redner --- ", chartData);
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, chartData ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__["Radar"], {
+      data: chartData
+    }) : null);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Chart);
+
+/***/ }),
+
+/***/ "./src/HorizontalBarChart.js":
+/*!***********************************!*\
+  !*** ./src/HorizontalBarChart.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-chartjs-2 */ "./node_modules/react-chartjs-2/es/index.js");
+/* harmony import */ var react_chartjs_2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+class HorizontalBarChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+  constructor(props) {
+    super(props);
+    this.state = {
+      chartData: {}
+    };
+  }
+
+  async componentDidMount() {
+    let todaysCase = [];
+    let todaysDeath = [];
+    let totalCases = [];
+    let states = [];
+    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://disease.sh/v3/covid-19/states?sort=todayCases").then(res => {
+      console.log("res summary--- ", res.data);
+
+      for (let i = 0; i < res.data.length; i++) {
+        todaysCase.push(res.data[i].todayCases);
+        todaysDeath.push(res.data[i].todayDeaths);
+        totalCases.push(res.data[i].cases);
+        states.push(res.data[i].state);
+      }
+    });
+    this.getChartData(todaysCase, todaysDeath, totalCases, states);
+  }
+
+  getChartData(todaysCase, todaysDeath, totalCases, states) {
+    this.setState({
+      chartData: {
+        labels: states,
+        datasets: [// These two will be in the same stack.
+        {
+          label: "todays Cases",
+          backgroundColor: "rgba(255, 99, 132, 0.6)",
+          borderColor: "rgba(255, 99, 132, 0.6)",
+          borderWidth: 1,
+          //stack: 1,
+          hoverBackgroundColor: "rgba(255, 99, 132, 0.6)",
+          hoverBorderColor: "rgba(255, 99, 132, 0.6)",
+          data: todaysCase
+        }, {
+          label: "todays Deaths",
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
+          borderColor: "rgba(54, 162, 235, 0.6)",
+          borderWidth: 1,
+          //stack: 1,
+          hoverBackgroundColor: "rgba(54, 162, 235, 0.6)",
+          hoverBorderColor: "rgba(54, 162, 235, 0.6)",
+          data: todaysDeath
+        }]
+      }
+    });
+  }
+
+  render() {
+    let {
+      chartData
+    } = this.state;
+    console.log("chartData in redner --- ", chartData);
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, chartData ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__["HorizontalBar"], {
+      data: chartData
+    }) : null);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (HorizontalBarChart);
 
 /***/ }),
 
@@ -104104,158 +104428,176 @@ class LineChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(props) {
     super(props);
     this.state = {
-      selectedStatus: "confirmed",
-      selectedCountry: "Afghanistan",
-      selectedSlug: "afghanistan",
+      country: "Afghanistan",
+      slug: "afghanistan",
+      startDate: '2020-01-01',
+      endDate: '2020-08-31',
       countryList: [],
       chartData: {}
     };
   }
 
-  async handleChangeCountry(inputSlug) {
-    console.log("country is --- ", inputSlug);
-    let caseArr = [];
-    let dateArr = [];
+  async handleChangeStartDate(selectedStartDate) {
+    console.log("selectedStartDate in handleChangeStartDate is --- ", selectedStartDate);
     this.setState({
-      selectedSlug: inputSlug
+      startDate: selectedStartDate
     });
-    console.log(" chnage slug --- ", this.state.selectedSlug);
-    console.log("chnage status --", this.state.selectedStatus);
-    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get(`https://api.covid19api.com/dayone/country/${this.state.selectedSlug}/status/${this.state.selectedStatus}`).then(res => {
-      console.log("res from dayone country status api--- ", res); // console.log("res.data --- ", res.data);
-
-      for (let i = 0; i < res.data.length; i++) {
-        dateArr.push(res.data[i].Date);
-        caseArr.push(res.data[i].Cases);
-      } //  console.log("dateArr --- ", dateArr);
-
-
-      console.log("caseArr --- ", caseArr);
-    });
-    this.setState({
-      chartData: {
-        labels: dateArr,
-        datasets: [{
-          label: this.state.selectedStatus,
-          data: caseArr,
-          fill: false,
-          lineTension: 0.1,
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
-          borderCapStyle: "butt",
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: "miter",
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10
-        }]
-      }
-    });
+    console.log(this.state.startDate);
+    console.log(this.state.endDate);
+    console.log(this.state.slug);
+    this.getChartData(this.state.slug, selectedStartDate, this.state.endDate);
   }
 
-  async handleChangeStatus(selectedStatus) {
-    console.log("selectedStatus in handleChangeStatus is --- ", selectedStatus);
-    let caseArr = [];
-    let dateArr = [];
+  async handleChangeEndDate(selectedEndDate) {
+    console.log("selectedEndDate in handleChangeEndDate is --- ", selectedEndDate);
     this.setState({
-      selectedStatus: selectedStatus
+      endDate: selectedEndDate
     });
-    console.log(" chnage slug --- ", this.state.selectedSlug);
-    console.log("chnage status --", this.state.selectedStatus);
-    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get(`https://api.covid19api.com/dayone/country/${this.state.selectedSlug}/status/${this.state.selectedStatus}`).then(res => {
-      console.log("res from dayone country status api--- ", res);
-      console.log("res.data --- ", res.data);
+    console.log(this.state.startDate);
+    console.log(this.state.endDate);
+    console.log(this.state.slug);
+    this.getChartData(this.state.slug, this.state.startDate, selectedEndDate);
+  }
 
-      for (let i = 0; i < res.data.length; i++) {
-        dateArr.push(res.data[i].Date);
-        caseArr.push(res.data[i].Cases);
-      } //  console.log("dateArr --- ", dateArr);
-
-
-      console.log("caseArr --- ", caseArr);
-    });
+  async handleChangeCountry(inputSlug) {
+    console.log("country is --- ", inputSlug);
     this.setState({
-      chartData: {
-        labels: dateArr,
-        datasets: [{
-          label: this.state.selectedStatus,
-          data: caseArr,
-          fill: false,
-          lineTension: 0.1,
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
-          borderCapStyle: "butt",
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: "miter",
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10
-        }]
-      }
+      slug: inputSlug
     });
+    console.log(this.state.startDate);
+    console.log(this.state.endDate);
+    this.getChartData(inputSlug, this.state.startDate, this.state.endDate);
   }
 
   async componentDidMount() {
-    let caseArr = [];
-    let dateArr = [];
     await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://api.covid19api.com/countries").then(res => {
       console.log("res.data --- ", res.data);
       this.setState({
         countryList: res.data
       });
     });
-    console.log("state value is --- ", this.state.selectedSlug);
-    console.log("status value is --- ", this.state.selectedStatus);
-    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get(`https://api.covid19api.com/dayone/country/${this.state.selectedSlug}/status/${this.state.selectedStatus}`).then(res => {
+    this.getChartData(this.state.slug, this.state.startDate, this.state.endDate);
+  }
+
+  async getChartData(inputSlug, inputStartDate, inputEndDate) {
+    console.log("inputSlug ---- ", inputSlug);
+    console.log("inputStartDate ---- ", inputStartDate);
+    console.log("inputEndDate ---- ", inputEndDate);
+    console.log("state value is --- ", this.state.slug);
+    console.log('startDate is --- ', this.state.startDate);
+    console.log('endDate is --- ', this.state.endDate); // let newStartDate = this.state.startDate+'T00:00:00Z';
+    // let newEndDate = this.state.endDate+'T00:00:00Z';
+
+    let newStartDate = inputStartDate + 'T00:00:00Z';
+    let newEndDate = inputEndDate + 'T00:00:00Z';
+    console.log('newStartDate --- ', newStartDate);
+    console.log('newEndDate --- ', newEndDate);
+    let dateArr = [];
+    let confirmedArr = [];
+    let activeArr = [];
+    let deathArr = [];
+    let recoveredArr = []; //Returns all cases by case type for a country from the first recorded case
+    //Returns all cases by case type for a country. Country must be the slug from /countries or /summary. Cases must be one of: confirmed, recovered, deaths
+
+    console.log(`https://api.covid19api.com/country/${inputSlug}?from=${newStartDate}&to=${newEndDate}`); // https://api.covid19api.com/country/south-africa?from=2020-01-01T00:00:00Z&to=2020-04-01T00:00:00Z
+
+    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get(`https://api.covid19api.com/country/${inputSlug}?from=${newStartDate}&to=${newEndDate}`).then(res => {
       console.log("res from dayone country status api--- ", res);
       console.log("res.data --- ", res.data);
+      let newData = res.data.filter(record => record.Date >= inputStartDate && record.Date <= inputEndDate); //let newData = res.data;
 
-      for (let i = 0; i < res.data.length; i++) {
-        dateArr.push(res.data[i].Date);
-        caseArr.push(res.data[i].Cases);
+      console.log('newData --- ', newData);
+
+      for (let i = 0; i < newData.length; i++) {
+        confirmedArr.push(newData[i].Confirmed);
+        activeArr.push(newData[i].Active);
+        deathArr.push(newData[i].Deaths);
+        recoveredArr.push(newData[i].Recovered);
+        dateArr.push(newData[i].Date.substring(0, 10));
       }
 
-      console.log("dateArr --- ", dateArr);
-      console.log("caseArr --- ", caseArr);
+      console.log("confirmedArr --- ", confirmedArr);
+      console.log("activeArr --- ", activeArr);
+      console.log("deathArr --- ", deathArr);
+      console.log("recoveredArr --- ", recoveredArr);
+      console.log("dateArr --- ", dateArr); //  / console.log("caseArr --- ", caseArr);
     }); //call the Day one api to get status and country wise data and plot graph
 
     this.setState({
       chartData: {
         labels: dateArr,
         datasets: [{
-          label: "Cases",
-          data: caseArr,
+          label: "Confirmed Cases",
           fill: false,
-          lineTension: 0.1,
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
-          borderCapStyle: "butt",
+          lineTension: 0.2,
+          backgroundColor: "#EC6B56",
+          borderColor: "#EC6B56",
           borderDash: [],
           borderDashOffset: 0.0,
-          borderJoinStyle: "miter",
-          pointBorderColor: "rgba(75,192,192,1)",
+          pointBorderColor: "#EC6B56",
           pointBackgroundColor: "#fff",
           pointBorderWidth: 1,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "#EC6B56",
           pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10
+          pointRadius: 4,
+          pointHitRadius: 10,
+          data: confirmedArr
+        }, {
+          label: "Active Cases",
+          fill: false,
+          lineTension: 0.2,
+          backgroundColor: "#FFC154",
+          borderColor: "#FFC154",
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBorderColor: "#FFC154",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "#FFC154",
+          pointHoverBorderWidth: 2,
+          pointRadius: 4,
+          pointHitRadius: 10,
+          data: activeArr
+        }, {
+          label: "Death Cases",
+          fill: false,
+          lineTension: 0.2,
+          backgroundColor: "#47B39C",
+          borderColor: "#47B39C",
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBorderColor: "#47B39C",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "#47B39C",
+          pointHoverBorderWidth: 2,
+          pointRadius: 4,
+          pointHitRadius: 10,
+          data: deathArr
+        }, {
+          label: "Recovered Cases",
+          fill: false,
+          lineTension: 0.2,
+          backgroundColor: "#ff6384",
+          borderColor: "#ff6384",
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBorderColor: "#ff6384",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "#ff6384",
+          pointHoverBorderWidth: 2,
+          pointRadius: 4,
+          pointHitRadius: 10,
+          data: recoveredArr
         }]
       }
     });
@@ -104264,31 +104606,74 @@ class LineChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   render() {
     let {
       countryList,
-      selectedCountry,
-      selectedSlug,
-      selectedStatus,
-      chartData
+      country,
+      slug,
+      chartData,
+      startDate,
+      endDate
     } = this.state;
-    console.log("render should be called on change state", selectedCountry);
+    console.log("render should be called on change state", country);
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, countryList.length ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-      value: selectedSlug,
+      value: slug,
       onChange: e => this.handleChangeCountry(e.target.value)
     }, countryList.sort((a, b) => a.Country.toLowerCase() > b.Country.toLowerCase() ? 1 : -1).map(country => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
       key: country.Slug,
       value: country.Slug
     }, country.Country))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
-      value: selectedStatus,
-      onChange: e => this.handleChangeStatus(e.target.value)
+      value: startDate,
+      onChange: e => this.handleChangeStartDate(e.target.value)
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-      value: "confirmed",
-      key: "confirmed"
-    }, "confirmed"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-      value: "recovered",
-      key: "recovered"
-    }, "recovered"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-      value: "deaths",
-      key: "deaths"
-    }, "deaths"))) : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__["Line"], {
+      value: "2020-01-01",
+      key: "2020-01-01"
+    }, "2020-01-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-02-01",
+      key: "2020-02-01"
+    }, "2020-02-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-03-01",
+      key: "2020-03-01"
+    }, "2020-03-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-04-01",
+      key: "2020-04-01"
+    }, "2020-04-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-05-01",
+      key: "2020-05-01"
+    }, "2020-05-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-06-01",
+      key: "2020-06-01"
+    }, "2020-06-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-07-01",
+      key: "2020-07-01"
+    }, "2020-07-01"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-08-01",
+      key: "2020-08-01"
+    }, "2020-08-01")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+      value: endDate,
+      onChange: e => this.handleChangeEndDate(e.target.value)
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-01-31",
+      key: "2020-01-31"
+    }, "2020-01-31"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-02-29",
+      key: "2020-02-29"
+    }, "2020-02-29"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-03-31",
+      key: "2020-03-31"
+    }, "2020-03-31"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-04-30",
+      key: "2020-04-30"
+    }, "2020-04-30"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-05-31",
+      key: "2020-05-31"
+    }, "2020-05-31"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-06-30",
+      key: "2020-06-30"
+    }, "2020-06-30"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-07-31",
+      key: "2020-07-31"
+    }, "2020-07-31"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "2020-08-31",
+      key: "2020-08-31"
+    }, "2020-08-31"))) : null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_chartjs_2__WEBPACK_IMPORTED_MODULE_2__["Line"], {
       data: chartData
     })));
   }
@@ -104358,6 +104743,9 @@ class MapChart extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["TileLayer"], {
       url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     }), data !== undefined && data.map(record => {
+      let value = record.combinedKey.split(",");
+      console.log(value);
+
       if (record.lat !== null) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_leaflet__WEBPACK_IMPORTED_MODULE_3__["CircleMarker"], {
           key: record.uid,
@@ -104368,7 +104756,7 @@ class MapChart extends react__WEBPACK_IMPORTED_MODULE_0___default.a.Component {
           direction: "right",
           offset: [-8, -2],
           opacity: 1
-        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, record.countryRegion, " ", record.provinceState), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Confirmed: ", record.confirmed), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Recovered: ", record.recovered), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Deaths: ", record.deaths), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Active: ", record.active)));
+        }, value.map(name => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, " ", name)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Confirmed: ", record.confirmed), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Recovered: ", record.recovered), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Deaths: ", record.deaths), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Active: ", record.active)));
       }
     }))));
   }
@@ -104399,13 +104787,17 @@ const Nav = () => {
     className: "navDiv"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
     to: "/linechart"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Line Chart")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Country/Time")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
     to: "/piechart"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Pie Chart")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Global/Country")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
     to: "/mapchart"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Map Chart")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Country/Province")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
     to: "/barchart"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Bar Chart"))));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "US State Data")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+    to: "/horizontalbarchart"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "US State Today's Data ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+    to: "/chart"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "US State/Million Data"))));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Nav);
@@ -104438,28 +104830,47 @@ class PieChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       countryList: [],
       chartData: {},
       selectedCountry: "Global",
-      globalData: [],
-      countryData: [],
       caseLabels: [],
       caseValues: []
     };
   }
 
-  async handleChangeCountry(selectedcountry) {
+  handleChangeCountry(selectedcountry) {
     console.log("country is --- ", selectedcountry);
-    let country = [];
-    let confirmed = [];
-    let caseLabels = [];
-    let caseValues = [];
     this.setState({
       selectedCountry: selectedcountry
     });
     console.log('Onchange country --- ', this.state.selectedCountry);
+    this.getChartData(selectedcountry);
+  }
 
-    if (selectedcountry === "Global") {
+  async componentDidMount() {
+    let countries = [];
+    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://api.covid19api.com/countries").then(res => {
+      console.log(res);
+
+      for (const data of res.data) {
+        countries.push(data.Country);
+      }
+
+      countries = countries.sort();
+      console.log(countries);
+    });
+    this.setState({
+      countryList: countries
+    });
+    this.getChartData();
+  }
+
+  async getChartData(selectedcountry) {
+    let caseLabels = [];
+    let caseValues = [];
+    console.log('state country is --- ', this.state.selectedCountry);
+    console.log('selectedcountry --- ', selectedcountry);
+
+    if (selectedcountry === "Global" || selectedcountry === undefined) {
       await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://api.covid19api.com/summary").then(res => {
         console.log("res summary--- ", res);
-        console.log("global data --- ", res.data.Global);
 
         for (const [key, value] of Object.entries(res.data.Global)) {
           caseLabels.push(key);
@@ -104477,10 +104888,6 @@ class PieChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
             caseValues.push(value);
           }
         }
-
-        console.log("11111111111");
-        console.log(",caseValues ---- ", caseValues);
-        console.log("caseLabels ---- ", caseLabels);
       });
     }
 
@@ -104488,7 +104895,6 @@ class PieChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       chartData: {
         labels: caseLabels,
         datasets: [{
-          // label:'Confirmed cases',
           data: caseValues,
           backgroundColor: ["rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(255, 99, 132, 0.6)"]
         }]
@@ -104497,59 +104903,15 @@ class PieChart extends react__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     console.log("onChange state has been set ---", this.state.chartData);
   }
 
-  async componentDidMount() {
-    let countries = [];
-    let caseLabels = [];
-    let caseValues = []; //let confirmed = [];
-
-    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://api.covid19api.com/countries").then(res => {
-      console.log(res);
-
-      for (const data of res.data) {
-        countries.push(data.Country);
-      }
-
-      countries = countries.sort();
-      console.log(countries);
-    });
-    this.setState({
-      countryList: countries
-    });
-    await axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("https://api.covid19api.com/summary").then(res => {
-      console.log("res summary--- ", res);
-      console.log("global data --- ", res.data.Global);
-
-      for (const [key, value] of Object.entries(res.data.Global)) {
-        caseLabels.push(key);
-        caseValues.push(value);
-      }
-    }); // this.setState({ caseLabels: caseLabels });
-    // this.setState({ caseValues: caseValues });
-
-    this.setState({
-      chartData: {
-        labels: caseLabels,
-        datasets: [{
-          // label:'Confirmed cases',
-          data: caseValues,
-          backgroundColor: ["rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(75, 192, 192, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(255, 99, 132, 0.6)"]
-        }]
-      }
-    });
-  }
-
   render() {
-    console.log("render should be called on change state");
     let {
       countryList,
-      chartData,
-      selectedCountry
+      selectedCountry,
+      chartData
     } = this.state;
-    console.log("countryList in render is ---", countryList); // console.log("caseLabels in render is ---", caseLabels);
-    // console.log("caseValues in render is ---", caseValues);
-
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, countryList.length ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
       value: selectedCountry,
+      name: "selectedCountry",
       onChange: e => this.handleChangeCountry(e.target.value)
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
       value: "Global"

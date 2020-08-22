@@ -9,29 +9,42 @@ class PieChart extends Component {
       countryList: [],
       chartData: {},
       selectedCountry: "Global",
-      globalData: [],
-      countryData: [],
       caseLabels: [],
       caseValues: [],
     };
   }
 
-  async handleChangeCountry(selectedcountry) {
+  handleChangeCountry(selectedcountry){
     console.log("country is --- ", selectedcountry);
-    let country = [];
-    let confirmed = [];
+    this.setState({selectedCountry:selectedcountry});
+    console.log('Onchange country --- ',this.state.selectedCountry);
+    this.getChartData(selectedcountry);
+  }
+ 
+   async  componentDidMount() {
+    let countries = [];
+   await  axios.get("https://api.covid19api.com/countries").then((res) => {
+      console.log(res);
+      for (const data of res.data) {
+        countries.push(data.Country);
+      }
+      countries = countries.sort();
+      console.log(countries);
+    });
+    this.setState({ countryList: countries });
+    this.getChartData();
+    
+  }
+
+
+  async getChartData(selectedcountry){
     let caseLabels = [];
     let caseValues = [];
-    this.setState({ selectedCountry: selectedcountry });
-
-
-    console.log('Onchange country --- ',this.state.selectedCountry);
-
-
-    if (selectedcountry === "Global") {
+    console.log('state country is --- ',this.state.selectedCountry);
+    console.log('selectedcountry --- ',selectedcountry);
+    if (selectedcountry === "Global" || selectedcountry === undefined) {
       await axios.get("https://api.covid19api.com/summary").then((res) => {
         console.log("res summary--- ", res);
-        console.log("global data --- ", res.data.Global);
         for (const [key, value] of Object.entries(res.data.Global)) {
           caseLabels.push(key);
           caseValues.push(value);
@@ -57,10 +70,7 @@ class PieChart extends Component {
             caseValues.push(value);
           }
         }
-        console.log("11111111111");
-        console.log(",caseValues ---- ", caseValues);
-        console.log("caseLabels ---- ", caseLabels);
-      });
+     });
     }
 
     this.setState({
@@ -68,8 +78,7 @@ class PieChart extends Component {
         labels: caseLabels,
         datasets: [
           {
-            // label:'Confirmed cases',
-            data: caseValues,
+             data: caseValues,
             backgroundColor: [
               "rgba(255, 99, 132, 0.6)",
               "rgba(54, 162, 235, 0.6)",
@@ -86,66 +95,14 @@ class PieChart extends Component {
     console.log("onChange state has been set ---", this.state.chartData);
   }
 
-  async componentDidMount() {
-    let countries = [];
-    let caseLabels = [];
-    let caseValues = [];
-    //let confirmed = [];
-    await axios.get("https://api.covid19api.com/countries").then((res) => {
-      console.log(res);
-      for (const data of res.data) {
-        countries.push(data.Country);
-      }
-      countries = countries.sort();
-      console.log(countries);
-    });
-    this.setState({ countryList: countries });
-
-    await axios.get("https://api.covid19api.com/summary").then((res) => {
-      console.log("res summary--- ", res);
-      console.log("global data --- ", res.data.Global);
-      for (const [key, value] of Object.entries(res.data.Global)) {
-        caseLabels.push(key);
-        caseValues.push(value);
-      }
-    });
-    // this.setState({ caseLabels: caseLabels });
-    // this.setState({ caseValues: caseValues });
-
-    this.setState({
-      chartData: {
-        labels: caseLabels,
-        datasets: [
-          {
-            // label:'Confirmed cases',
-            data: caseValues,
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.6)",
-              "rgba(54, 162, 235, 0.6)",
-              "rgba(255, 206, 86, 0.6)",
-              "rgba(75, 192, 192, 0.6)",
-              "rgba(153, 102, 255, 0.6)",
-              "rgba(255, 159, 64, 0.6)",
-              "rgba(255, 99, 132, 0.6)",
-            ],
-          },
-        ],
-      },
-    });
-  }
-
   render() {
-    console.log("render should be called on change state");
-    let { countryList, chartData ,selectedCountry} = this.state;
-    console.log("countryList in render is ---", countryList);
-    // console.log("caseLabels in render is ---", caseLabels);
-    // console.log("caseValues in render is ---", caseValues);
-    return (
+   let { countryList, selectedCountry,chartData} = this.state;
+      return (
       <div>
         <div>
           {countryList.length ? (
             <div>
-              <select value={selectedCountry}
+              <select value={selectedCountry} name="selectedCountry"
                 onChange={(e) => this.handleChangeCountry(e.target.value)}
               >
                 <option value="Global">Global</option>

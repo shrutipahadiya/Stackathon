@@ -45,6 +45,8 @@ class MapChart extends React.Component {
             <TileLayer url="http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {data !== undefined &&
               data.map((record) => {
+                let value = record.combinedKey.split(",");
+                console.log(value);
                 if (record.lat !== null) {
                   return (
                     <CircleMarker key={record.uid}
@@ -53,9 +55,10 @@ class MapChart extends React.Component {
                       color="rgb(241, 85, 85)"
                     >
                       <Tooltip direction="right" offset={[-8, -2]} opacity={1}>
-                        <span>
-                          {record.countryRegion} {record.provinceState}
-                        </span>
+                       
+                          {/* {record.countryRegion} {record.provinceState}  */}
+                  { value.map(name => <span> {name}</span>)}
+                        
                         <br></br>
                         <span>Confirmed: {record.confirmed}</span>
                         <br></br>
